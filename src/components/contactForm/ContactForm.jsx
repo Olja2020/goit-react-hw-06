@@ -3,6 +3,8 @@ import { useId } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { nanoid } from "nanoid";
+import { addContact } from "../../redux/contactsSlice";
+import { useDispatch } from "react-redux";
 const UserSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, "min 3 letter")
@@ -13,10 +15,14 @@ const UserSchema = Yup.object().shape({
     .max(9, "max 9 number format xxx-xx-xx")
     .required("required field"),
 });
-export default function ContactForm({ onAdd }) {
+export default function ContactForm() {
+  const dispatch = useDispatch();
   const fieldId = useId();
   const handleSubmit = (values, actions) => {
-    onAdd({ ...values, id: nanoid() });
+    values.id = nanoid();
+    const { name, number } = values;
+    dispatch(addContact(name, number));
+
     actions.resetForm();
   };
   return (
